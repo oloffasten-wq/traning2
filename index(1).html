@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Milos Träningschema</title>
+<link rel="manifest" href="milo-manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080810;--s1:#10101c;--s2:#181826;--s3:#20202e;--acc:#ff6b35;--acc2:#e8ff47;--text:#eeeef5;--muted:#5a5a72;--border:rgba(255,255,255,0.06);--danger:#ff4545;--green:#47ffb0;--r:16px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.4;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 10% 0%,rgba(255,107,53,0.09) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 90% 100%,rgba(232,255,71,0.06) 0%,transparent 60%);pointer-events:none;z-index:0;}
+.app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;max-width:480px;margin:0 auto;}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:90px;scrollbar-width:none;}
+.screen::-webkit-scrollbar{display:none;}
+.header{padding:40px 16px 12px;display:flex;justify-content:space-between;align-items:flex-end;}
+.header-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--acc);font-weight:600;margin-bottom:4px;}
+.header-title{font-family:'Barlow Condensed',sans-serif;font-size:42px;font-weight:800;line-height:0.9;letter-spacing:1px;}
+.header-title span{color:var(--acc);}
+.bottom-nav{display:flex;background:rgba(8,8,16,0.92);backdrop-filter:blur(20px);border-top:1px solid var(--border);padding:10px 8px 28px;flex-shrink:0;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--muted);font-family:'Nunito',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;padding:8px 4px;border-radius:12px;transition:all 0.2s;}
+.nav-btn.active{color:var(--acc);background:rgba(255,107,53,0.1);}
+.nav-icon{font-size:20px;line-height:1;}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;}
+.card-title{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:12px;}
+.pad{padding:0 16px;}
+.sh{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;letter-spacing:1px;margin:16px 16px 10px;color:var(--text);}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:12px;border:none;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.15s;}
+.btn:active{transform:scale(0.97);}
+.btn-acc{background:var(--acc);color:#080810;}
+.btn-sec{background:var(--s2);color:var(--text);border:1px solid var(--border);}
+.btn-danger{background:rgba(255,69,69,0.1);color:var(--danger);border:1px solid rgba(255,69,69,0.2);}
+.btn-sm{padding:10px 16px;font-size:13px;border-radius:10px;width:auto;}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
+.fg label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+input,select,textarea{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;font-family:'Nunito',sans-serif;width:100%;transition:border-color 0.2s;-webkit-appearance:none;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc);}
+textarea{resize:none;height:70px;}
+select option{background:#181826;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fw{grid-column:1/-1;}
+/* Pass tiles */
+.pass-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;}
+.pass-tile{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.pass-tile:active{transform:scale(0.97);}
+.pass-tile.next-up{border-color:rgba(255,107,53,0.4);background:rgba(255,107,53,0.06);}
+.pass-tile-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--acc);margin-bottom:4px;}
+.pass-tile-meta{font-size:11px;color:var(--muted);}
+.progress-bar{height:4px;background:var(--s3);border-radius:100px;overflow:hidden;margin-top:10px;}
+.progress-fill{height:100%;background:var(--acc);border-radius:100px;transition:width 0.4s ease;}
+.progress-lbl{font-size:10px;color:var(--muted);margin-top:4px;}
+.next-badge{position:absolute;top:10px;right:10px;background:var(--acc);color:#080810;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:100px;}
+/* Stats */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.stat-box{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;}
+.stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px;}
+.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;line-height:1;}
+.stat-unit{font-family:'Nunito',sans-serif;font-size:13px;color:var(--muted);font-weight:400;}
+.stat-chg{font-size:12px;font-weight:700;margin-top:4px;}
+.up{color:var(--acc);}.dn{color:var(--danger);}.neu{color:var(--muted);}
+/* History */
+.hist-item{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;}
+.hist-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.hist-name{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;color:var(--acc);}
+.hist-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:2px 6px;}
+.hist-ex-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;margin-top:6px;}
+.hist-sets{font-size:11px;color:var(--muted);line-height:1.7;}
+.stag{display:inline-block;padding:2px 7px;border-radius:100px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;background:rgba(71,255,176,0.1);color:var(--green);margin-left:4px;}
+/* Active pass */
+.ex-block{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.ex-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;margin-bottom:4px;letter-spacing:0.5px;}
+.ex-schema{font-size:11px;color:var(--acc);font-weight:600;margin-bottom:8px;}
+.ex-inputs{display:flex;gap:10px;align-items:center;}
+.ex-inputs .wi{display:flex;flex-direction:column;gap:4px;width:90px;flex-shrink:0;}
+.ex-inputs .ri{display:flex;flex-direction:column;gap:4px;flex:1;}
+.ex-inputs label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+.ex-inputs input{padding:10px 12px;font-size:15px;}
+.ex-sep{color:var(--muted);font-size:18px;padding-top:20px;flex-shrink:0;}
+/* Pills */
+.pill-tabs{display:flex;gap:6px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none;flex-shrink:0;}
+.pill-tabs::-webkit-scrollbar{display:none;}
+.pill{flex-shrink:0;padding:8px 18px;border-radius:100px;border:1px solid var(--border);background:var(--s1);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Nunito',sans-serif;}
+.pill.active{background:var(--acc);color:#080810;border-color:var(--acc);}
+/* Mått */
+.mu{position:relative;}.mu input{padding-right:40px;}.mu .u{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted);pointer-events:none;}
+/* Toggle */
+.tog-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);}
+.tog-row:last-child{border-bottom:none;}
+.tog-lbl{font-size:14px;font-weight:600;}.tog-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+/* Back */
+.back-btn{background:none;border:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;cursor:pointer;padding:12px 16px 0;display:flex;align-items:center;gap:6px;}
+.back-btn:active{color:var(--acc);}
+/* Toast */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--acc);color:#080810;padding:11px 22px;border-radius:100px;font-weight:700;font-size:14px;z-index:999;opacity:0;transition:all 0.25s;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* Empty */
+.empty{text-align:center;padding:32px 20px;color:var(--muted);font-size:13px;line-height:1.7;}
+.empty-icon{font-size:34px;display:block;margin-bottom:10px;}
+/* Screens */
+[data-screen]{display:none;flex-direction:column;height:100%;}
+[data-screen].active{display:flex;}
+/* Season banner */
+.season-banner{margin:0 16px 12px;background:linear-gradient(135deg,rgba(255,107,53,0.12),rgba(232,255,71,0.06));border:1px solid rgba(255,107,53,0.3);border-radius:var(--r);padding:14px;display:flex;gap:12px;align-items:flex-start;}
+/* Streak */
+.streak-box{margin:0 16px 12px;background:linear-gradient(135deg,rgba(71,255,176,0.08),rgba(255,107,53,0.05));border:1px solid rgba(71,255,176,0.2);border-radius:var(--r);padding:14px;display:flex;gap:14px;align-items:center;}
+.streak-num{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:800;color:var(--green);line-height:1;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HOME -->
+<div data-screen="home" class="active">
+  <div class="screen">
+    <div class="header">
+      <div>
+        <div class="header-tag">Milos</div>
+        <div class="header-title">TRÄNINGS<span>SCHEMA</span></div>
+      </div>
+    </div>
+    <div id="streak-box"></div>
+    <div id="season-banner"></div>
+    <div class="sh">VÄLJ PASS</div>
+    <div class="pass-grid" id="home-pass-grid"></div>
+    <div class="sh">SENASTE MÅTT</div>
+    <div class="pad"><div class="stat-grid" id="home-stats"></div></div>
+  </div>
+  <div class="bottom-nav">
+    <button class="nav-btn active" onclick="goScreen('home')"><span class="nav-icon">🏠</span>Hem</button>
+    <button class="nav-btn" onclick="goScreen('history')"><span class="nav-icon">📋</span>Historik</button>
+    <button class="nav-btn" onclick="goScreen('mått')"><span class="nav-icon">📏</span>Mått</button>
+    <button class="nav-btn" onclick="goScreen('settings')"><span class="nav-icon">⚙️</span>Inställningar</button>
+  </div>
+</div>
+
+<!-- ACTIVE PASS -->
+<div data-screen="active-pass">
+  <div class="screen">
+    <button class="back-btn" onclick="goScreen('home')">← Tillbaka</button>
+    <div class="header">
+      <div>
+        <div class="header-tag" id="active-pass-tag"></div>
+        <div class="header-title" id="active-pass-title"></div>
+      </div>
+    </div>
+    <div class="pad">
+      <div class="row2" style="margin-bottom:10px">
+        <div class="fg"><label>Datum</label><input type="date" id="active-datum"></div>
+        <div class="fg"><label>Plats (valfri)</label><input type="text" id="active-plats" placeholder="Gym, hemma..."></div>
+      </div>
+    </div>
+    <div class="pad" id="active-exercises"></div>
+    <div class="pad" style="margin-top:8px;padding-bottom:16px">
+      <button class="btn btn-acc" onclick="saveWorkout()">💾 Spara träningspass</button>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="nav-btn" onclick="goScreen('home')"><span class="nav-icon">🏠</span>Hem</button>
+    <button class="nav-btn" onclick="goScreen('history')"><span class="nav-icon">📋</span>Historik</button>
+    <button class="nav-btn" onclick="goScreen('mått')"><span class="nav-icon">📏</span>Mått</button>
+    <button class="nav-btn" onclick="goScreen('settings')"><span class="nav-icon">⚙️</span>Inställningar</button>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div data-screen="history">
+  <div class="screen">
+    <div class="header"><div><div class="header-tag">All din</div><div class="header-title">HISTORIK</div></div></div>
+    <div class="pill-tabs" id="history-filters"></div>
+    <div class="pad" id="history-list"></div>
+  </div>
+  <div class="bottom-nav">
+    <button class="nav-btn" onclick="goScreen('home')"><span class="nav-icon">🏠</span>Hem</button>
+    <button class="nav-btn active" onclick="goScreen('history')"><span class="nav-icon">📋</span>Historik</button>
+    <button class="nav-btn" onclick="goScreen('mått')"><span class="nav-icon">📏</span>Mått</button>
+    <button class="nav-btn" onclick="goScreen('settings')"><span class="nav-icon">⚙️</span>Inställningar</button>
+  </div>
+</div>
+
+<!-- MÅTT -->
+<div data-screen="mått">
+  <div class="screen">
+    <div class="header"><div><div class="header-tag">Registrera</div><div class="header-title">MÅTT</div></div></div>
+    <div class="pad">
+      <div class="card">
+        <div class="card-title">Nya mätvärden</div>
+        <div class="row2">
+          <div class="fg fw"><label>Datum</label><input type="date" id="m-datum"></div>
+          <div class="fg"><label>Vikt</label><div class="mu"><input type="number" id="m-vikt" placeholder="0.0" step="0.1"><span class="u">kg</span></div></div>
+          <div class="fg"><label>Midja</label><div class="mu"><input type="number" id="m-midja" placeholder="0" step="0.5"><span class="u">cm</span></div></div>
+          <div class="fg"><label>Höft</label><div class="mu"><input type="number" id="m-höft" placeholder="0" step="0.5"><span class="u">cm</span></div></div>
+          <div class="fg"><label>Hals</label><div class="mu"><input type="number" id="m-hals" placeholder="0" step="0.5"><span class="u">cm</span></div></div>
+        </div>
+        <button class="btn btn-acc" onclick="saveMått()">💾 Spara mått</button>
+      </div>
+    </div>
+    <div class="sh">HISTORIK</div>
+    <div class="pad" id="mått-history"></div>
+  </div>
+  <div class="bottom-nav">
+    <button class="nav-btn" onclick="goScreen('home')"><span class="nav-icon">🏠</span>Hem</button>
+    <button class="nav-btn" onclick="goScreen('history')"><span class="nav-icon">📋</span>Historik</button>
+    <button class="nav-btn active" onclick="goScreen('mått')"><span class="nav-icon">📏</span>Mått</button>
+    <button class="nav-btn" onclick="goScreen('settings')"><span class="nav-icon">⚙️</span>Inställningar</button>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div data-screen="settings">
+  <div class="screen">
+    <div class="header"><div><div class="header-tag">Milos</div><div class="header-title">INSTÄLLNINGAR</div></div></div>
+    <div class="sh">DATA</div>
+    <div class="pad">
+      <div class="card">
+        <div style="margin-bottom:14px">
+          <div style="font-weight:700;font-size:14px;margin-bottom:4px">Exportera data</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Ladda ner all data som JSON</div>
+          <button class="btn btn-sec" onclick="exportData()">📤 Exportera</button>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
+          <div style="font-weight:700;font-size:14px;margin-bottom:4px">Importera data</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Återställ träningshistorik och mått från JSON</div>
+          <input type="file" id="import-file" accept="application/json,.json" style="display:none" onchange="importData(event)">
+          <button class="btn btn-sec" onclick="document.getElementById('import-file').click()">📥 Importera</button>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <div style="font-weight:700;font-size:14px;color:var(--danger);margin-bottom:4px">Rensa all data</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Tar bort all data permanent</div>
+          <button class="btn btn-danger" onclick="clearAll()">🗑️ Rensa data</button>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;padding:24px;color:var(--muted);font-size:11px">All data sparas lokalt på din enhet</div>
+  </div>
+  <div class="bottom-nav">
+    <button class="nav-btn" onclick="goScreen('home')"><span class="nav-icon">🏠</span>Hem</button>
+    <button class="nav-btn" onclick="goScreen('history')"><span class="nav-icon">📋</span>Historik</button>
+    <button class="nav-btn" onclick="goScreen('mått')"><span class="nav-icon">📏</span>Mått</button>
+    <button class="nav-btn active" onclick="goScreen('settings')"><span class="nav-icon">⚙️</span>Inställningar</button>
+  </div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SEASON_SIZE = 8;
+
+const PASSES = [
+  {
+    id: 'upper1',
+    name: 'Upper 1',
+    icon: '💪',
+    exercises: [
+      { name: 'Latsdrag', sets: 3, repsHint: '8-12' },
+      { name: 'Latsrodd', sets: 3, repsHint: '8-12' },
+      { name: 'Chestfly maskin', sets: 3, repsHint: '10-14' },
+      { name: 'Deadhang', sets: 3, repsHint: 'tid' },
+    ]
+  },
+  {
+    id: 'lower1',
+    name: 'Lower 1',
+    icon: '🦵',
+    exercises: [
+      { name: 'Squats', sets: 3, repsHint: '6-10' },
+      { name: 'Benböj med pinne', sets: 3, repsHint: '10-15' },
+      { name: 'Hamstring curl', sets: 3, repsHint: '10-12' },
+      { name: 'Benspark', sets: 3, repsHint: '10-15' },
+      { name: 'Benpress', sets: 3, repsHint: '8-12' },
+    ]
+  },
+  {
+    id: 'extra',
+    name: 'Extra',
+    icon: '⚡',
+    exercises: [
+      { name: 'Push-ups', sets: 3, repsHint: 'max' },
+      { name: 'Plankan', sets: 3, repsHint: 'tid' },
+      { name: 'Benlyft', sets: 3, repsHint: '10-15' },
+    ]
+  }
+];
+
+const DB = {
+  get: k => { try { return JSON.parse(localStorage.getItem('milo_'+k)) } catch { return null } },
+  set: (k,v) => localStorage.setItem('milo_'+k, JSON.stringify(v)),
+  workouts: () => DB.get('workouts') || [],
+  mått: () => DB.get('mått') || [],
+};
+
+function passCount(passId){ return DB.workouts().filter(w=>w.passId===passId).length; }
+function currentSeason(passId){ return Math.floor(passCount(passId)/SEASON_SIZE)+1; }
+function sessionsInSeason(passId){ return passCount(passId)%SEASON_SIZE; }
+
+function goScreen(name){
+  document.querySelectorAll('[data-screen]').forEach(s=>s.classList.remove('active'));
+  document.querySelector('[data-screen="'+name+'"]').classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const navMap={'home':0,'history':1,'mått':2,'settings':3,'active-pass':-1};
+  const idx=navMap[name];
+  if(idx>=0) document.querySelectorAll('.nav-btn')[idx+(idx>=0?0:0)]?.classList.add('active');
+  // re-activate correct nav btn per screen
+  document.querySelectorAll('[data-screen="'+name+'"] .nav-btn').forEach((b,i)=>{
+    const labels=['home','history','mått','settings'];
+    if(labels[i]===name) b.classList.add('active');
+  });
+  if(name==='home') renderHome();
+  if(name==='history') renderHistory('all');
+  if(name==='mått'){ document.getElementById('m-datum').value=today(); renderMåttHistory(); }
+}
+
+// HOME
+function renderHome(){
+  renderPassGrid();
+  renderHomeStats();
+  renderStreak();
+  renderSeasonBanner();
+}
+
+function renderStreak(){
+  const workouts=DB.workouts();
+  const el=document.getElementById('streak-box');
+  if(!workouts.length){ el.innerHTML=''; return; }
+  // count unique workout days in last 30 days
+  const now=new Date();
+  const days30=new Date(now.getTime()-30*24*60*60*1000);
+  const recent=workouts.filter(w=>new Date(w.date+'T12:00:00')>=days30);
+  const uniqueDays=new Set(recent.map(w=>w.date)).size;
+  if(!uniqueDays){ el.innerHTML=''; return; }
+  el.innerHTML=`<div class="streak-box">
+    <div class="streak-num">${uniqueDays}</div>
+    <div><div style="font-weight:700;font-size:14px;color:var(--green);margin-bottom:2px">pass senaste 30 dagarna</div><div style="font-size:12px;color:var(--muted)">Fortsätt så! 💪</div></div>
+  </div>`;
+}
+
+function renderSeasonBanner(){
+  const el=document.getElementById('season-banner');
+  const done=PASSES.filter(pa=>{ const c=passCount(pa.id); return c>0&&c%SEASON_SIZE===0; });
+  if(done.length){
+    const pa=done[0]; const s=currentSeason(pa.id);
+    el.innerHTML=`<div class="season-banner"><div style="font-size:22px">🏆</div><div><div style="font-weight:700;font-size:14px;color:var(--acc);margin-bottom:3px">Ny säsong!</div><div style="font-size:12px;color:var(--muted);line-height:1.5">${pa.name} har ${SEASON_SIZE} pass klara — säsong ${s} börjar!</div></div></div>`;
+  } else { el.innerHTML=''; }
+}
+
+function renderPassGrid(){
+  const el=document.getElementById('home-pass-grid');
+  const counts=PASSES.map(pa=>sessionsInSeason(pa.id));
+  const minC=Math.min(...counts);
+  const nextIdx=counts.indexOf(minC);
+  el.innerHTML=PASSES.map((pa,i)=>{
+    const s=currentSeason(pa.id);
+    const c=sessionsInSeason(pa.id);
+    const pct=(c/SEASON_SIZE)*100;
+    const isNext=i===nextIdx;
+    return `<div class="pass-tile ${isNext?'next-up':''}" onclick="openPass('${pa.id}')">
+      ${isNext?'<div class="next-badge">Nästa</div>':''}
+      <div style="font-size:22px;margin-bottom:6px">${pa.icon}</div>
+      <div class="pass-tile-name">${pa.name}</div>
+      <div class="pass-tile-meta">Säsong ${s} · ${pa.exercises.length} övn.</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="progress-lbl">${c}/${SEASON_SIZE} pass</div>
+    </div>`;
+  }).join('');
+}
+
+function renderHomeStats(){
+  const mått=DB.mått(); const el=document.getElementById('home-stats');
+  if(!mått.length){ el.innerHTML='<div class="empty" style="grid-column:1/-1"><span class="empty-icon">📏</span>Registrera mått för statistik</div>'; return; }
+  const l=mått[0],p=mått[1];
+  el.innerHTML=[sbox('Vikt',l.vikt,'kg',p?.vikt),sbox('Midja',l.midja,'cm',p?.midja),sbox('Höft',l.höft,'cm',p?.höft),sbox('Hals',l.hals,'cm',p?.hals)].filter(Boolean).join('');
+}
+function sbox(lbl,val,unit,prev){
+  if(!val) return '';
+  const diff=prev?(val-prev).toFixed(1):null;
+  const cls=diff===null?'neu':parseFloat(diff)<0?'up':parseFloat(diff)>0?'dn':'neu';
+  const sign=parseFloat(diff)>0?'+':'';
+  return `<div class="stat-box"><div class="stat-lbl">${lbl}</div><div class="stat-val">${val} <span class="stat-unit">${unit}</span></div>${diff!==null?`<div class="stat-chg ${cls}">${sign}${diff} ${unit}</div>`:'<div class="stat-chg neu">—</div>'}</div>`;
+}
+
+// ACTIVE PASS
+let curPass=null;
+function openPass(passId){
+  const pass=PASSES.find(p=>p.id===passId);
+  if(!pass) return;
+  curPass=pass;
+  const s=currentSeason(passId);
+  document.getElementById('active-pass-tag').textContent=`Säsong ${s} · Pass ${passCount(passId)+1}`;
+  document.getElementById('active-pass-title').textContent=pass.name.toUpperCase();
+  document.getElementById('active-datum').value=today();
+  document.getElementById('active-plats').value='';
+  const lastW=[...DB.workouts()].filter(w=>w.passId===passId).sort((a,b)=>b.date.localeCompare(a.date))[0];
+  document.getElementById('active-exercises').innerHTML=pass.exercises.map((ex,ei)=>{
+    const le=lastW?.exercises?.find(e=>e.name===ex.name);
+    const lastWval=le?le.sets[0]?.w||'':'';
+    const lastRval=le?le.sets.map(s=>s.r).join(', '):'';
+    return `<div class="ex-block">
+      <div class="ex-name">${ex.name}</div>
+      <div class="ex-schema">${ex.sets} sets · ${ex.repsHint} reps</div>
+      <div class="ex-inputs">
+        <div class="wi">
+          <label>Vikt (kg)</label>
+          <input type="number" placeholder="${lastWval||'kg'}" step="0.5" id="w-${ei}">
+        </div>
+        <div class="ex-sep">×</div>
+        <div class="ri">
+          <label>Reps per set</label>
+          <input type="text" placeholder="${lastRval||ex.repsHint}" id="r-${ei}">
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  goScreen('active-pass');
+}
+
+function saveWorkout(){
+  const date=document.getElementById('active-datum').value;
+  const place=document.getElementById('active-plats').value.trim();
+  if(!date){ showToast('⚠️ Välj datum'); return; }
+  const exercises=[];
+  curPass.exercises.forEach((ex,ei)=>{
+    const w=parseFloat(document.getElementById(`w-${ei}`)?.value)||0;
+    const rStr=document.getElementById(`r-${ei}`)?.value?.trim()||'';
+    if(!rStr&&!w) return;
+    const reps=rStr.split(',').map(r=>r.trim()).filter(Boolean);
+    const sets=reps.length>0?reps.map(r=>({w,r})):[{w,r:rStr}];
+    exercises.push({name:ex.name,sets});
+  });
+  if(!exercises.length){ showToast('⚠️ Fyll i minst en övning'); return; }
+  const countBefore=passCount(curPass.id);
+  const season=Math.floor(countBefore/SEASON_SIZE)+1;
+  const workouts=DB.workouts();
+  workouts.unshift({id:'w_'+Date.now(),date,place,passId:curPass.id,passName:curPass.name,season,exercises});
+  DB.set('workouts',workouts);
+  const countAfter=countBefore+1;
+  if(countAfter%SEASON_SIZE===0) showToast(`🏆 Säsong ${season} klar!`);
+  else showToast('✅ Pass sparat!');
+  goScreen('home');
+}
+
+// HISTORY
+let hFilter='all';
+function renderHistory(f){
+  hFilter=f;
+  const workouts=DB.workouts();
+  const filtersEl=document.getElementById('history-filters');
+  const filters=['all',...PASSES.map(p=>p.id)];
+  filtersEl.innerHTML=filters.map(x=>{
+    const pass=PASSES.find(p=>p.id===x);
+    const lbl=x==='all'?'Alla':(pass?.name||x);
+    return `<button class="pill ${hFilter===x?'active':''}" onclick="filterH('${x}',this)">${lbl}</button>`;
+  }).join('');
+  const filtered=f==='all'?workouts:workouts.filter(w=>w.passId===f);
+  const sorted=[...filtered].sort((a,b)=>b.date.localeCompare(a.date));
+  const el=document.getElementById('history-list');
+  if(!sorted.length){ el.innerHTML='<div class="empty"><span class="empty-icon">📋</span>Inga träningspass ännu</div>'; return; }
+  el.innerHTML=sorted.map(w=>`<div class="hist-item">
+    <div class="hist-hdr">
+      <div>
+        <span class="hist-name">${w.passName}</span>${w.season?`<span class="stag">S${w.season}</span>`:''}
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">${fmtDate(w.date)}${w.place?' · '+w.place:''}</div>
+      </div>
+      <button class="hist-del" onclick="delW('${w.id}')">✕</button>
+    </div>
+    ${w.exercises.map(ex=>{
+      const wVal=ex.sets[0]?.w;
+      const allReps=ex.sets.map(s=>s.r).join(', ');
+      return `<div class="hist-ex-name">${ex.name}</div><div class="hist-sets">${wVal?wVal+'kg · ':''}${allReps}</div>`;
+    }).join('')}
+  </div>`).join('');
+}
+function filterH(f,btn){ document.querySelectorAll('#history-filters .pill').forEach(p=>p.classList.remove('active')); btn.classList.add('active'); renderHistory(f); }
+function delW(id){ if(!confirm('Ta bort?')) return; DB.set('workouts',DB.workouts().filter(w=>w.id!==id)); renderHistory(hFilter); showToast('🗑️ Borttaget'); }
+
+// MÅTT
+function saveMått(){
+  const date=document.getElementById('m-datum').value;
+  const vikt=parseFloat(document.getElementById('m-vikt').value);
+  const midja=parseFloat(document.getElementById('m-midja').value);
+  const höft=parseFloat(document.getElementById('m-höft').value);
+  const hals=parseFloat(document.getElementById('m-hals').value);
+  if(!date){ showToast('⚠️ Välj datum'); return; }
+  if(!vikt&&!midja&&!höft&&!hals){ showToast('⚠️ Ange minst ett mått'); return; }
+  const mått=DB.mått();
+  mått.unshift({id:'m_'+Date.now(),date,vikt:vikt||null,midja:midja||null,höft:höft||null,hals:hals||null});
+  DB.set('mått',mått);
+  ['m-vikt','m-midja','m-höft','m-hals'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('m-datum').value=today();
+  showToast('✅ Mått sparat!'); renderMåttHistory();
+}
+function renderMåttHistory(){
+  const mått=DB.mått(); const el=document.getElementById('mått-history');
+  if(!mått.length){ el.innerHTML='<div class="empty"><span class="empty-icon">📏</span>Inga mätvärden ännu</div>'; return; }
+  el.innerHTML=mått.map(m=>`<div class="hist-item">
+    <div class="hist-hdr"><div style="font-size:11px;color:var(--muted)">${fmtDate(m.date)}</div><button class="hist-del" onclick="delM('${m.id}')">✕</button></div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:6px">
+      ${m.vikt?`<div><div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700">${m.vikt}<span style="font-size:12px;color:var(--muted)"> kg</span></div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Vikt</div></div>`:''}
+      ${m.midja?`<div><div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700">${m.midja}<span style="font-size:12px;color:var(--muted)"> cm</span></div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Midja</div></div>`:''}
+      ${m.höft?`<div><div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700">${m.höft}<span style="font-size:12px;color:var(--muted)"> cm</span></div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Höft</div></div>`:''}
+      ${m.hals?`<div><div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700">${m.hals}<span style="font-size:12px;color:var(--muted)"> cm</span></div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Hals</div></div>`:''}
+    </div>
+  </div>`).join('');
+}
+function delM(id){ DB.set('mått',DB.mått().filter(m=>m.id!==id)); renderMåttHistory(); }
+
+// DATA
+function exportData(){
+  const d={workouts:DB.workouts(),mått:DB.mått(),exportedAt:new Date().toISOString()};
+  const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='milo-traning.json'; a.click();
+  showToast('📤 Exporterat!');
+}
+function importData(event){
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      if(!d||(!d.workouts&&!d.mått)){ showToast('⚠️ Ogiltig fil'); return; }
+      if(!confirm('Importera träningshistorik och mått? (Skriver över befintlig historik)')) return;
+      if(d.workouts) DB.set('workouts',d.workouts);
+      if(d.mått) DB.set('mått',d.mått);
+      showToast('✅ Data importerad!');
+      renderHome();
+    }catch(err){ showToast('⚠️ Kunde inte läsa filen'); }
+  };
+  reader.readAsText(file);
+  event.target.value='';
+}
+function clearAll(){ if(!confirm('Radera ALL data permanent?')) return; ['workouts','mått'].forEach(k=>localStorage.removeItem('milo_'+k)); location.reload(); }
+
+// HELPERS
+function today(){ return new Date().toISOString().split('T')[0]; }
+function fmtDate(d){ if(!d) return ''; return new Date(d+'T12:00:00').toLocaleDateString('sv-SE',{day:'numeric',month:'short',year:'numeric'}); }
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+
+document.getElementById('m-datum').value=today();
+renderHome();
+</script>
+</body>
+</html>
